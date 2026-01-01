@@ -25,12 +25,6 @@ This project demonstrates how to deploy a **serverless AI application** using AW
 
 ## Setup Instructions
 
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/atkutes/aws-bedrock-chat-api
-cd aws-bedrock-chatbot
-
 ## Configuration Notes
 
 Model ID: amazon.titan-text-express-v1 (ensure your AWS account has access)
@@ -40,3 +34,12 @@ Region: us-east-1
 Timeout: 15 seconds (adjust if needed for longer responses)
 
 Max Tokens: 256 (adjust for longer AI responses)
+
+---
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/atkutes/aws-bedrock-chat-api
+cd aws-bedrock-chatbot
+
