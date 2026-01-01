@@ -1,37 +1,39 @@
 import json
 import boto3
 
-bedrock = boto3.client(
-    service_name="bedrock_runtime",
-    region_name="us-east-1"
-)
+bedrock = boto3.client(service_name="bedrock-runtime", region_name="us-east-1")
 
-def lambda_handler(evet, context):
-    body = json.loads(event["body"])
-    message = body.get("message")
+def lambda_handler(event, context):
+    body = json.loads(event.get("body", "{}"))
+    message = body.get("message", "")
 
-prompt =  prompt = f"""
-    You are a helpful AI assistant.
-    User: {message}
-    Assistant:
-    """
+    prompt_text = f"You are a helpful assistant.\nUser: {message}\nAssistant:"
 
     response = bedrock.invoke_model(
-        modelId="anthropic.claude-v2",
+        modelId="amazon.titan-text-express-v1",
         body=json.dumps({
-            "prompt": prompt,
-            "max_tokens_to_sample": 300,
-            "temperature": 0.7
+            "inputText": prompt_text,
+            "textGenerationConfig": {
+                "maxTokenCount": 256,
+                "temperature": 0.7,
+                "topP": 0.9,
+                "stopSequences": []
+            }
         }),
         contentType="application/json",
         accept="application/json"
     )
 
-    result = json.loads(response["body"].read())
-    answer = result["completion"]
+    body_response = response["body"].read()
+    result = json.loads(body_response)
+
+    reply = ""
+    if "results" in result and len(result["results"]) > 0:
+        reply = result["results"][0].get("outputText", "").strip()
 
     return {
         "statusCode": 200,
         "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"reply": answer})
+        "body": json.dumps({"reply": reply})
     }
+
